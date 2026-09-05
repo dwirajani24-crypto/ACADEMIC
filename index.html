@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#efe5d2">
+<meta name="description" content="A calm, local-first A-Level study planner, timetable, timer and academic journal.">
+<link rel="manifest" href="manifest.json">
+<title>Academic Ledger</title>
+<style>
+:root{
+  --bg:#efe5d2;--surface:#f8f1e4;--surface2:#e8dcc7;--ink:#2f241e;--muted:#76695d;
+  --accent:#355b47;--accent2:#7f2632;--gold:#a17d42;--line:#cfc0a8;--shadow:0 10px 30px rgba(53,39,25,.08);
+  --radius:14px;--danger:#874b46;--ok:#3d654e;--focus:#9a6d22;
+}
+[data-theme="christmas"]{--bg:#eee7dc;--surface:#faf7f0;--surface2:#e1ddd0;--ink:#29352e;--muted:#687067;--accent:#315b45;--accent2:#7b2934;--gold:#a18345;--line:#c8c3b7}
+[data-theme="minimal"]{--bg:#f4f4f1;--surface:#fff;--surface2:#ecece7;--ink:#272722;--muted:#6c6c64;--accent:#444c43;--accent2:#62524d;--gold:#75694d;--line:#d4d4cc}
+[data-theme="pink"]{--bg:#f5e9e8;--surface:#fff8f7;--surface2:#ead6d6;--ink:#392b2e;--muted:#776568;--accent:#72505b;--accent2:#8b3f4f;--gold:#9a7650;--line:#d8bfc0}
+[data-theme="monochrome"]{--bg:#e7e7e4;--surface:#f7f7f5;--surface2:#dcdcd8;--ink:#252525;--muted:#666;--accent:#444;--accent2:#555;--gold:#666;--line:#c5c5c0}
+[data-theme="forest"]{--bg:#e5eadf;--surface:#f3f5ed;--surface2:#d6dfcf;--ink:#263128;--muted:#657065;--accent:#2f5940;--accent2:#704044;--gold:#8c7441;--line:#bdc9ba}
+[data-theme="midnight"]{--bg:#171b1b;--surface:#202625;--surface2:#2a302e;--ink:#eee7d9;--muted:#b4ab9e;--accent:#6d9a7e;--accent2:#b16a70;--gold:#b99b61;--line:#3e4742;--shadow:0 10px 30px rgba(0,0,0,.22)}
+[data-theme="sepia"]{--bg:#dfd0b6;--surface:#f0e5cf;--surface2:#d7c5a5;--ink:#34281e;--muted:#74634e;--accent:#4d5941;--accent2:#713d3d;--gold:#8c6d38;--line:#bfae8f}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}
+h1,h2,h3,h4,.serif{font-family:Georgia,"Times New Roman",serif;line-height:1.15}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid color-mix(in srgb,var(--focus),transparent 45%);outline-offset:2px}
+.app{display:flex;min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:var(--surface);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;z-index:20}
+.brand{display:flex;align-items:center;gap:12px;padding:6px 10px 22px}
+.brand img{width:42px;height:42px;border-radius:10px}
+.brand-title{font-family:Georgia,serif;font-size:20px}
+.brand-sub{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.nav{display:grid;gap:4px}
+.nav button{border:0;background:transparent;color:var(--ink);text-align:left;padding:11px 12px;border-radius:10px;display:flex;align-items:center;gap:11px}
+.nav button:hover{background:var(--surface2)}
+.nav button.active{background:var(--surface2);color:var(--accent);font-weight:700}
+.nav-icon{width:22px;text-align:center;font-size:15px}
+.sidebar-foot{margin-top:auto;border-top:1px solid var(--line);padding:14px 10px;color:var(--muted);font-size:12px}
+.main{margin-left:250px;width:calc(100% - 250px);min-width:0}
+.topbar{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg),transparent 8%);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.page-title{margin:0;font-size:25px}
+.top-actions{display:flex;gap:8px;align-items:center}
+.content{max-width:1400px;margin:0 auto;padding:28px}
+.grid{display:grid;gap:18px}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.card-title{margin:0 0 4px;font-size:18px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--muted);font-weight:700}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 13px;font-weight:650}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.secondary{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger)}
+.btn.icon{padding:8px 10px}
+.row{display:flex;gap:10px;align-items:center}
+.between{display:flex;justify-content:space-between;gap:14px;align-items:center}
+.wrap{flex-wrap:wrap}
+.stat{font-size:28px;font-weight:750;font-family:Georgia,serif}
+.progress{height:9px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.progress>span{display:block;height:100%;background:var(--accent);border-radius:99px}
+.agenda{display:grid;gap:10px}
+.agenda-item{border-left:4px solid var(--accent);padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-left-width:4px;border-radius:10px}
+.agenda-item.break{border-left-color:var(--gold);opacity:.82}
+.agenda-item.done{opacity:.65}
+.agenda-item h3{margin:0;font-size:17px}
+.agenda-meta{font-size:12px;color:var(--muted);margin:4px 0 8px}
+.agenda-desc{font-size:13px;color:var(--muted);margin-bottom:12px}
+.pill{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:99px;padding:3px 8px;font-size:11px;color:var(--muted)}
+.subject-pill{color:var(--accent);font-weight:700}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--surface2)}
+tr:last-child td{border-bottom:0}
+input,select,textarea{width:100%;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:10px}
+textarea{min-height:100px;resize:vertical}
+label{display:grid;gap:6px;font-size:13px;font-weight:650}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.form-grid .full{grid-column:1/-1}
+.modal-backdrop{position:fixed;inset:0;background:rgba(28,22,17,.48);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-backdrop.open{display:flex}
+.modal{width:min(720px,100%);max-height:92vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.2);padding:22px}
+.modal.wide{width:min(1050px,100%)}
+.modal h2{margin:0 0 5px}
+.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:18px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.toast{position:fixed;right:18px;bottom:18px;z-index:200;background:var(--ink);color:var(--surface);padding:11px 15px;border-radius:10px;box-shadow:var(--shadow);display:none;max-width:min(420px,calc(100vw - 36px))}
+.toast.show{display:block}
+.calendar-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line);border-right:0;border-bottom:0}
+.cal-day,.cal-head{min-height:90px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px}
+.cal-head{min-height:auto;background:var(--surface2);font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.cal-day.other{opacity:.45}
+.cal-day.selected{box-shadow:inset 0 0 0 2px var(--accent)}
+.cal-num{font-size:13px;font-weight:700}
+.cal-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;margin-left:4px}
+.timer{display:grid;place-items:center;text-align:center;padding:20px}
+.ring{width:230px;height:230px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) var(--pct),var(--surface2) 0);position:relative;margin:12px auto 20px}
+.ring::after{content:"";position:absolute;inset:12px;background:var(--surface);border-radius:50%}
+.ring-inner{position:relative;z-index:1}
+.timer-time{font-family:Georgia,serif;font-size:42px;font-weight:700}
+.timer-elapsed{font-size:13px;color:var(--muted)}
+.choice-row{display:flex;gap:8px;flex-wrap:wrap}
+.choice{border:1px solid var(--line);padding:8px 12px;border-radius:9px;background:var(--surface)}
+.choice.selected{border-color:var(--accent);background:var(--surface2);color:var(--accent);font-weight:700}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{padding:15px;background:var(--surface2);border-radius:11px}
+.kpi .value{font-family:Georgia,serif;font-size:24px;font-weight:700}
+.chart{width:100%;height:220px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.list{display:grid;gap:8px}
+.list-item{padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.notice{padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);font-size:13px}
+.hidden{display:none!important}
+.mobile-only{display:none}
+@media(max-width:1000px){
+  .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:760px){
+  .sidebar{position:fixed;top:auto;right:0;bottom:0;left:0;width:auto;height:70px;border-right:0;border-top:1px solid var(--line);padding:6px 5px;display:block}
+  .brand,.sidebar-foot{display:none}
+  .nav{display:grid;grid-template-columns:repeat(9,1fr);gap:1px;height:100%}
+  .nav button{justify-content:center;flex-direction:column;gap:2px;padding:4px 2px;font-size:9px;text-align:center;border-radius:7px}
+  .nav-icon{font-size:14px;width:auto}
+  .main{margin-left:0;width:100%;padding-bottom:70px}
+  .topbar{padding:12px 15px}
+  .content{padding:17px 13px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .calendar-grid{font-size:11px}
+  .cal-day{min-height:62px;padding:5px}
+  .cal-head{padding:6px 3px}
+  .top-actions .hide-mobile{display:none}
+  .page-title{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<div id="app" class="app">
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="brand">
+      <img src="icons/icon-192.png" alt="">
+      <div><div class="brand-title">Academic Ledger</div><div class="brand-sub">A-Level command centre</div></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sidebar-foot">Local-first study journal<br><span id="storageStatus">Preparing storage…</span></div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <h1 class="page-title" id="pageTitle">Home</h1>
+      <div class="top-actions">
+        <button class="btn primary" data-action="quick-add">+ Add session</button>
+        <button class="btn hide-mobile" data-action="go-settings">Settings</button>
+      </div>
+    </header>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" role="presentation">
+  <section class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input id="importInput" type="file" accept="application/json,.json" class="hidden">
+
+<script>
+"use strict";
+
+/* ============================================================
+   EDITABLE APP DATA
+   Default topics are intentionally empty. Create topics in the
+   application; deleting one never deletes historical sessions.
+   ============================================================ */
+const SUBJECTS = [
+  {id:"mathematics",name:"Mathematics"},
+  {id:"furtherMathematics",name:"Further Mathematics"},
+  {id:"economics",name:"Economics"},
+  {id:"computerScience",name:"Computer Science"}
+];
+
+const DEFAULT_TOPICS = {
+  mathematics: [],
+  furtherMathematics: [],
+  economics: [],
+  computerScience: []
+};
+
+const THEMES = {
+  autumn:"Academia Autumn", christmas:"Christmas", minimal:"Plain / Minimal",
+  pink:"Soft Pink", monochrome:"Monochrome", forest:"Forest",
+  midnight:"Midnight Academia", sepia:"Library / Sepia"
+};
+
+const D = (subject,duration,description,type="study") => ({id:uid(),subject,duration,description,type});
+const DEFAULT_TIMETABLE = {
+  A:{
+    Monday:[
+      D("mathematics",120,"Review today's Mathematics lesson → identify anything not fully understood → targeted textbook/problem-set questions → finish with timed exam questions."),
+      D("furtherMathematics",120,"Review recent Further Maths material → attempt difficult problems without notes → check worked solutions → mark and record mistakes."),
+      D("break",60,"Dinner","break"),
+      D("economics",90,"Review recent class material using active recall → reproduce key diagrams/chains of analysis from memory → complete one substantial exam question → mark and improve the answer.")
+    ],
+    Tuesday:[
+      D("computerScience",120,"Review today's/recent theory → active-recall questions without notes → apply concepts to unfamiliar questions → finish with exam questions and correct misconceptions."),
+      D("mathematics",120,"Pure/problem-solving practice → focus on multi-step questions → timed exam section → mark and record recurring errors."),
+      D("break",60,"Dinner","break"),
+      D("economics",90,"Active recall of recent material → practise explaining chains of reasoning → one timed extended-response question → mark and rewrite weak sections.")
+    ],
+    Wednesday:[
+      D("furtherMathematics",120,"Consolidate the most recent Further Maths work → challenging problem set → attempt selected problems with no notes → analyse mistakes."),
+      D("computerScience",90,"Theory consolidation → active recall → programming/problem-solving practice → exam questions focused on applying knowledge."),
+      D("break",60,"Dinner","break"),
+      D("mathematics",120,"Spaced retrieval of material from earlier in the week → mixed problem set → timed questions → mark carefully and update your error log.")
+    ],
+    Thursday:[
+      D("economics",120,"Consolidate recent classroom material → active recall of concepts and relationships → practise diagrams/chains of analysis → one timed essay-style question → mark and improve."),
+      D("furtherMathematics",120,"High-difficulty problem-solving session → work independently before checking methods → second attempts at difficult questions → record mistakes and gaps."),
+      D("break",60,"Dinner","break"),
+      D("computerScience",90,"Review current theory → retrieval practice → programming/problem-solving task → exam questions and marking.")
+    ],
+    Friday:[
+      D("mathematics",120,"Weekly Mathematics consolidation → mixed questions from material studied across the week → timed exam practice → identify the three most important weaknesses to revisit."),
+      D("economics",90,"Weekly retrieval session → reconstruct important concepts/diagrams from memory → one timed exam response → mark against the mark scheme."),
+      D("break",60,"Dinner","break"),
+      D("computerScience",120,"Consolidate the week's Computer Science learning → active-recall test → programming/problem-solving practice → exam questions → update your mistakes log.")
+    ],
+    Saturday:[
+      D("furtherMathematics",150,"Deep problem-solving session → challenging questions across currently studied material → work without notes → mark thoroughly → redo questions you initially failed."),
+      D("mathematics",120,"Mixed-topic problem solving → prioritise multi-step questions → timed exam section → detailed marking."),
+      D("break",60,"Dinner","break"),
+      D("economics",90,"Active recall → diagrams/chains of analysis → one timed extended-response question → mark → improve the answer using the mark scheme."),
+      D("computerScience",120,"Theory retrieval → programming/problem-solving practice → unfamiliar application questions → exam questions → correct and log mistakes.")
+    ],
+    Sunday:[
+      D("economics",120,"Spaced retrieval of the week's Economics material → test yourself before looking at notes → practise application and chains of reasoning → one timed exam response → mark and improve."),
+      D("furtherMathematics",150,"Challenging problem set focused on weakest current areas → independent attempts → review solutions → redo failed questions from scratch."),
+      D("break",60,"Dinner","break"),
+      D("computerScience",90,"Weekly retrieval test → consolidate theory you struggled with → programming/problem-solving practice → exam questions."),
+      D("mathematics",120,"Weekly mixed Mathematics session → timed questions → analyse mistakes → revisit difficult questions without looking at previous solutions.")
+    ]
+  },
+  B:{
+    Monday:[
+      D("mathematics",120,"Review today's Mathematics content → targeted questions → increasingly difficult problems → finish with timed exam questions."),
+      D("furtherMathematics",120,"Consolidate today's/recent material → difficult independent problems → check solutions after attempting them → record errors and unresolved points."),
+      D("break",60,"Dinner","break"),
+      D("economics",90,"Review recent Economics material → active recall → reproduce diagrams and chains of reasoning → complete and mark an exam question.")
+    ],
+    Tuesday:[
+      D("furtherMathematics",120,"Reinforce today's/recent learning → challenging problem set → focus on mathematical reasoning → mark and redo errors."),
+      D("computerScience",120,"Review recent theory → active recall → programming/problem-solving practice → unfamiliar exam questions → mark and correct."),
+      D("break",60,"Dinner","break"),
+      D("mathematics",90,"Spaced retrieval of recent Mathematics → targeted problem set → timed questions → record weaknesses for the weekend.")
+    ],
+    Wednesday:[
+      D("economics",120,"Consolidate recent Economics learning → active recall → practise application and analytical chains → timed extended-response question → mark and improve."),
+      D("mathematics",120,"Mixed problem solving → deliberately combine older and newer material → timed questions → detailed error analysis."),
+      D("break",60,"Dinner","break"),
+      D("computerScience",90,"Theory retrieval → apply concepts to questions → programming/problem solving → exam questions and corrections.")
+    ],
+    Thursday:[
+      D("furtherMathematics",120,"Deep problem-solving session → difficult current-topic questions → independent attempts → solution analysis → redo failed problems."),
+      D("computerScience",90,"Consolidate current theory → active recall → programming/problem-solving practice → exam questions."),
+      D("break",60,"Dinner","break"),
+      D("economics",90,"Active recall → diagrams and chains of analysis → timed exam question → mark and improve the weakest sections.")
+    ],
+    Friday:[
+      D("mathematics",120,"Weekly Mathematics consolidation → mixed questions → timed exam section → mark and identify recurring mistakes."),
+      D("economics",90,"Weekly retrieval → test knowledge without notes → application practice → one timed written response → mark."),
+      D("break",60,"Dinner","break"),
+      D("furtherMathematics",120,"Challenging weekly problem set → prioritise weaknesses identified during the week → work independently → mark → redo difficult questions.")
+    ],
+    Saturday:[
+      D("computerScience",150,"Deep theory consolidation → active recall → programming/problem-solving practice → unfamiliar application questions → exam practice."),
+      D("furtherMathematics",150,"High-difficulty problem-solving → focus on weakest current material → independent attempts → mark → redo errors."),
+      D("mathematics",90,"Timed mixed-question session → mark thoroughly → analyse errors → targeted second attempts."),
+      D("break",60,"Dinner","break"),
+      D("economics",90,"Active recall → diagrams/chains of analysis → timed exam response → mark and improve.")
+    ],
+    Sunday:[
+      D("economics",120,"Comprehensive weekly retrieval → consolidate weak areas → application and analytical practice → timed extended-response question → mark and improve."),
+      D("furtherMathematics",120,"Spaced retrieval + challenging problems → revisit errors from the week → attempt previously difficult questions again without notes."),
+      D("mathematics",120,"Mixed-topic problem solving → timed exam questions → detailed marking → maintain and review your error log."),
+      D("break",60,"Dinner","break"),
+      D("computerScience",120,"Weekly theory retrieval → programming/problem-solving practice → unfamiliar exam questions → mark → consolidate remaining gaps.")
+    ]
+  }
+};
+
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const NAV=[
+  ["home","⌂","Home"],["timetable","▦","Timetable"],["calendar","□","Calendar"],["history","≡","History"],
+  ["progress","◒","Progress"],["subjects","◇","Subjects"],["weekend","✓","Weekend"],["pressing","!","Pressing"],["settings","⚙","Settings"]
+];
+
+let state = {
+  settings:{week:"A",theme:"autumn",onboarded:false,notifications:false,reminder:"daily",clock24:true,firstDay:1,defaultSession:"prepare"},
+  timetable:null,topics:[],sessions:[],weekendTasks:[],pressing:[],weeklyReviews:[],activeTimer:null
+};
+let db=null, storageMode="indexedDB", currentPage="home", selectedDate=isoDate(new Date()), calendarCursor=new Date();
+let timerInterval=null, modalCleanup=null;
+
+function uid(){return (crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2));}
+function isoDate(d){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);}
+function fmtDate(s,opts={weekday:"long",day:"numeric",month:"long"}){return new Intl.DateTimeFormat(undefined,opts).format(new Date(s+"T12:00:00"));}
+function minutesText(m){m=Math.max(0,Math.round(m||0));const h=Math.floor(m/60),r=m%60;return h?`${h}h ${r?`${r}m`:""}`.trim():`${r}m`;}
+function dateKey(d){return isoDate(d);}
+function subjectName(id){return SUBJECTS.find(s=>s.id===id)?.name||id||"Unknown";}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function clone(x){return JSON.parse(JSON.stringify(x));}
+function showToast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(showToast.t);showToast.t=setTimeout(()=>el.classList.remove("show"),2800);}
+function safeLSGet(k){try{return localStorage.getItem(k)}catch{return null}}
+function safeLSSet(k,v){try{localStorage.setItem(k,v);return true}catch{return false}}
+
+async function initDB(){
+  try{
+    if(!("indexedDB" in window)) throw new Error("IndexedDB unavailable");
+    db=await new Promise((resolve,reject)=>{
+      const req=indexedDB.open("academic-ledger",1);
+      req.onupgradeneeded=()=>{const d=req.result;["settings","timetable","topics","sessions","weekendTasks","pressing","weeklyReviews","activeTimer"].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:"id"});});};
+      req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+    });
+    storageMode="indexedDB";
+    return true;
+  }catch(e){storageMode="localStorage";return false}
+}
+async function dbAll(store){
+  if(storageMode==="indexedDB") return new Promise((res,rej)=>{const r=db.transaction(store,"readonly").objectStore(store).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error)});
+  const raw=safeLSGet("ledger-"+store); if(!raw)return []; try{return JSON.parse(raw)||[]}catch{return []}
+}
+async function dbPut(store,obj){
+  if(storageMode==="indexedDB") return new Promise((res,rej)=>{const r=db.transaction(store,"readwrite").objectStore(store).put(obj);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+  const all=await dbAll(store), i=all.findIndex(x=>x.id===obj.id); if(i>=0)all[i]=obj;else all.push(obj); if(!safeLSSet("ledger-"+store,JSON.stringify(all)))throw new Error("Storage unavailable");
+}
+async function dbDelete(store,id){
+  if(storageMode==="indexedDB") return new Promise((res,rej)=>{const r=db.transaction(store,"readwrite").objectStore(store).delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+  const all=(await dbAll(store)).filter(x=>x.id!==id);safeLSSet("ledger-"+store,JSON.stringify(all));
+}
+async function dbClear(){
+  if(storageMode==="indexedDB"){await Promise.all(["settings","timetable","topics","sessions","weekendTasks","pressing","weeklyReviews","activeTimer"].map(s=>new Promise((res,rej)=>{const r=db.transaction(s,"readwrite").objectStore(s).clear();r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})));}
+  else ["settings","timetable","topics","sessions","weekendTasks","pressing","weeklyReviews","activeTimer"].forEach(s=>{try{localStorage.removeItem("ledger-"+s)}catch{}});
+}
+async function persistSettings(){await dbPut("settings",{id:"main",...state.settings});}
+async function loadState(){
+  const [settings,timetable,topics,sessions,weekendTasks,pressing,weeklyReviews,activeTimer]=await Promise.all(
+    ["settings","timetable","topics","sessions","weekendTasks","pressing","weeklyReviews","activeTimer"].map(dbAll)
+  );
+  state.settings={...state.settings,...(settings[0]||{})};
+  state.timetable=(timetable[0]?.data)||clone(DEFAULT_TIMETABLE);
+  state.topics=topics;
+  state.sessions=sessions;
+  state.weekendTasks=weekendTasks;
+  state.pressing=pressing;
+  state.weeklyReviews=weeklyReviews;
+  state.activeTimer=activeTimer[0]||null;
+  repairState();
+  if(!state.settings.onboarded && safeLSGet("ledger-onboarded")==="1")state.settings.onboarded=true;
+  applyTheme();
+}
+async function seedTimetable(){const rows=await dbAll("timetable");if(!rows.length)await dbPut("timetable",{id:"main",data:clone(DEFAULT_TIMETABLE)});else await dbPut("timetable",{id:"main",data:normaliseTimetable(rows[0]?.data)});}
+function normaliseTimetable(raw){
+  const base=clone(DEFAULT_TIMETABLE), out={A:{},B:{}};
+  for(const w of ["A","B"]){for(const day of DAYS){
+    const incoming=raw?.[w]?.[day];
+    out[w][day]=Array.isArray(incoming)?incoming.map(x=>({id:x?.id||uid(),subject:x?.type==="break"?"break":(SUBJECTS.some(s=>s.id===x?.subject)?x.subject:"mathematics"),duration:Math.max(5,Number(x?.duration)||60),description:String(x?.description||"Study session"),type:x?.type==="break"?"break":"study"})):clone(base[w][day]);
+  }} return out;
+}
+function repairState(){
+  state.settings={week:state.settings?.week==="B"?"B":"A",theme:THEMES[state.settings?.theme]?state.settings.theme:"autumn",onboarded:!!state.settings?.onboarded,notifications:!!state.settings?.notifications,reminder:["daily","twice-daily","weekly"].includes(state.settings?.reminder)?state.settings.reminder:"daily",clock24:state.settings?.clock24!==false,firstDay:Number(state.settings?.firstDay)===0?0:1,defaultSession:state.settings?.defaultSession==="timer"?"timer":"prepare"};
+  state.timetable=normaliseTimetable(state.timetable);
+  state.topics=Array.isArray(state.topics)?state.topics.filter(t=>t&&t.id).map(t=>({...t,name:String(t.name||"").trim(),subject:SUBJECTS.some(s=>s.id===t.subject)?t.subject:"mathematics",subtopic:String(t.subtopic||""),archived:!!t.archived})).filter(t=>t.name):[];
+  state.sessions=Array.isArray(state.sessions)?state.sessions.filter(s=>s&&s.id):[];
+  state.weekendTasks=Array.isArray(state.weekendTasks)?state.weekendTasks.filter(t=>t&&t.id):[];
+  state.pressing=Array.isArray(state.pressing)?state.pressing.filter(t=>t&&t.id):[];
+  state.weeklyReviews=Array.isArray(state.weeklyReviews)?state.weeklyReviews.filter(r=>r&&r.id):[];
+  if(state.activeTimer&&!state.activeTimer.id)state.activeTimer=null;
+}
+function applyTheme(){document.documentElement.dataset.theme=state.settings.theme||"autumn";const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();}
+function weekForDate(d){
+  const anchor=new Date("2026-09-07T12:00:00"); // first Monday of the academic cycle is Week A
+  const target=new Date(d);target.setHours(12,0,0,0);anchor.setHours(12,0,0,0);
+  const diff=Math.floor((target-anchor)/86400000);
+  return ((Math.floor(diff/7)%2)+2)%2===0?"A":"B";
+}
+function dayName(d){return new Intl.DateTimeFormat(undefined,{weekday:"long"}).format(d);}
+function plannedFor(dateStr){
+  const d=new Date(dateStr+"T12:00:00"), w=weekForDate(d), day=dayName(d);
+  return (state.timetable?.[w]?.[day]||[]).filter(x=>x.type==="study");
+}
+function sessionsOn(dateStr){return state.sessions.filter(s=>s.date===dateStr && s.status==="completed");}
+function actualMinutes(dateStr){return sessionsOn(dateStr).reduce((a,s)=>a+(s.durationActual||0),0);}
+function plannedMinutes(dateStr){return plannedFor(dateStr).reduce((a,s)=>a+(Number(s.duration)||0),0);}
+function x(duration){return duration}
+function weekStart(d){const n=new Date(d+"T12:00:00");const day=(n.getDay()+6)%7;n.setDate(n.getDate()-day);return n}
+function weekDates(d){const start=weekStart(d);return Array.from({length:7},(_,i)=>{const z=new Date(start);z.setDate(start.getDate()+i);return isoDate(z)})}
+function weekMinutes(d){return weekDates(d).reduce((a,k)=>a+actualMinutes(k),0)}
+function weekPlanned(d){return weekDates(d).reduce((a,k)=>a+plannedMinutes(k),0)}
+function subjectMinutes(id){return state.sessions.filter(s=>s.status==="completed"&&s.subject===id).reduce((a,s)=>a+(s.durationActual||0),0)}
+function subjectSessions(id){return state.sessions.filter(s=>s.status==="completed"&&s.subject===id)}
+function currentStreak(){
+  const dates=new Set(state.sessions.filter(s=>s.status==="completed").map(s=>s.date));let d=new Date();d.setHours(12,0,0,0);let count=0;
+  while(dates.has(isoDate(d))){count++;d.setDate(d.getDate()-1)} return count;
+}
+function startOfMonth(d){return new Date(d.getFullYear(),d.getMonth(),1)}
+function endOfMonth(d){return new Date(d.getFullYear(),d.getMonth()+1,0)}
+function pct(a,b){return b?Math.min(100,Math.round(a/b*100)):0}
+function totalPlannedAll(){return Object.values(state.timetable||{}).reduce((a,w)=>a+Object.values(w).reduce((b,day)=>b+day.filter(x=>x.type==="study").reduce((c,x)=>c+x.duration,0),0),0)}
+function activeTimerDate(){return state.activeTimer?.date||null}
+
+function renderNav(){
+  const nav=document.getElementById("nav");nav.replaceChildren();
+  NAV.forEach(([id,icon,label])=>{const b=document.createElement("button");b.type="button";b.dataset.page=id;b.className=currentPage===id?"active":"";
+    b.innerHTML=`<span class="nav-icon" aria-hidden="true">${icon}</span><span>${label}</span>`;b.onclick=()=>navigate(id);nav.appendChild(b);});
+}
+function navigate(page){currentPage=page;document.getElementById("pageTitle").textContent=NAV.find(x=>x[0]===page)?.[2]||"Home";renderNav();renderPage();}
+function renderPage(){
+  try{repairState();({home:renderHome,timetable:renderTimetable,calendar:renderCalendar,history:renderHistory,progress:renderProgress,subjects:renderSubjects,weekend:renderWeekend,pressing:renderPressing,settings:renderSettings}[currentPage]||renderHome)();}
+  catch(e){console.error("Render error:",e);document.getElementById("content").innerHTML=`<div class="card"><h2>Unable to render this section</h2><p class="muted">The saved data was checked and repaired where possible. You can retry this section without losing your data.</p><div class="row wrap"><button class="btn primary" data-action="retry-page">Retry</button><button class="btn" data-action="safe-reset-timetable">Repair timetable</button></div><details style="margin-top:12px"><summary>Technical detail</summary><pre class="small" style="white-space:pre-wrap">${escapeHtml(e?.message||String(e))}</pre></details></div>`;bindActions();}
+}
+function renderHome(){
+  const today=isoDate(new Date()), d=new Date(today+"T12:00:00"), w=weekForDate(d), day=dayName(d), plan=state.timetable[w]?.[day]||[], p=plannedMinutes(today), a=actualMinutes(today), completed=sessionsOn(today).length, studies=plan.filter(x=>x.type==="study").length;
+  const agenda=plan.map(item=>{
+    if(item.type==="break")return `<div class="agenda-item break"><div class="between"><h3>${escapeHtml(item.description||"Break")}</h3><span class="pill">${minutesText(item.duration)}</span></div><div class="agenda-meta">Break / dinner</div></div>`;
+    const matched=state.sessions.find(s=>s.date===today&&s.timetableId===item.id&&s.status==="completed");
+    return `<div class="agenda-item ${matched?"done":""}"><div class="between"><h3>${escapeHtml(subjectName(item.subject))}</h3><span class="pill">${minutesText(item.duration)}</span></div>
+      <div class="agenda-meta">${matched?"Completed":"Planned study"}</div><div class="agenda-desc">${escapeHtml(item.description)}</div>
+      <div class="row wrap">${matched?`<button class="btn" data-session="${matched.id}" data-action="view-session">View record</button>`:`<button class="btn primary" data-action="start" data-item="${item.id}" data-day="${day}" data-week="${w}">Start session</button><button class="btn" data-action="complete-planned" data-item="${item.id}" data-day="${day}" data-week="${w}">Mark complete</button><button class="btn" data-action="mark-planned" data-status="incomplete" data-item="${item.id}" data-day="${day}" data-week="${w}">Mark incomplete</button><button class="btn" data-action="mark-planned" data-status="skipped" data-item="${item.id}" data-day="${day}" data-week="${w}">Skip</button>`}</div>
+    </div>`;
+  }).join("");
+  const outstanding=state.weekendTasks.filter(t=>!t.completed).length+state.pressing.filter(t=>!t.completed).length;
+  document.getElementById("content").innerHTML=`
+  <div class="grid" style="gap:22px">
+    <section class="between wrap"><div><div class="eyebrow">Today</div><h2 style="margin:4px 0 5px;font-size:32px">${escapeHtml(fmtDate(today))}</h2><div class="muted">${day} · Week ${w}</div></div><div class="row wrap"><span class="pill">${minutesText(p)} planned</span><span class="pill">${minutesText(a)} completed</span><span class="pill">${minutesText(Math.max(0,p-a))} remaining</span></div></section>
+    <section class="kpi-grid">
+      <div class="kpi"><div class="eyebrow">Today's progress</div><div class="value">${minutesText(a)} / ${minutesText(p)}</div><div class="progress"><span style="width:${pct(a,p)}%"></span></div></div>
+      <div class="kpi"><div class="eyebrow">Sessions</div><div class="value">${completed} / ${studies}</div><div class="muted small">${Math.max(0,studies-completed)} remaining</div></div>
+      <div class="kpi"><div class="eyebrow">This week</div><div class="value">${minutesText(weekMinutes(today))}</div><div class="muted small">of ${minutesText(weekPlanned(today))} planned</div></div>
+      <div class="kpi"><div class="eyebrow">Needs attention</div><div class="value">${outstanding}</div><div class="muted small">weekend / pressing tasks</div></div>
+    </section>
+    ${state.activeTimer?`<section class="card"><div class="between wrap"><div><div class="eyebrow">Active session</div><h2 class="card-title">${escapeHtml(subjectName(state.activeTimer.subject))}</h2><div class="muted">${escapeHtml(state.activeTimer.topic||state.activeTimer.objective||"Session in progress")}</div></div><button class="btn primary" data-action="open-timer">Return to timer</button></div></section>`:""}
+    ${d.getDay()===0?`<section class="card"><div class="between wrap"><div><div class="eyebrow">Weekly review</div><h2 class="card-title">Close the week deliberately</h2><div class="muted">Review planned versus completed study, wins, improvements and unfinished work.</div></div><button class="btn primary" data-action="weekly-review">Open weekly review</button></div></section>`:""}
+    <section><div class="between"><div><div class="eyebrow">Agenda</div><h2 style="margin:4px 0 12px">What am I doing today?</h2></div><button class="btn" data-action="quick-add">+ Add independent session</button></div><div class="agenda">${agenda||`<div class="empty">No timetable entries for today.</div>`}</div></section>
+  </div>`;
+  bindActions();
+}
+function renderTimetable(){
+  repairState(); const w=state.settings.week;let html=`<div class="between wrap"><div><div class="eyebrow">Recurring plan</div><h2 style="margin:4px 0">Week ${w}</h2><p class="muted">Edit the timetable here without touching the source code. Changes persist locally.</p></div><div class="row wrap"><button class="btn ${w==="A"?"primary":""}" data-action="set-week" data-week="A">Week A</button><button class="btn ${w==="B"?"primary":""}" data-action="set-week" data-week="B">Week B</button><button class="btn" data-action="reset-week" data-week="${w}">Reset Week ${w}</button><button class="btn secondary" data-action="reset-timetable">Reset entire timetable</button></div></div>`;
+  html+=`<div class="table-wrap"><table><thead><tr><th>Day</th><th>Plan</th><th>Total study</th><th>Actions</th></tr></thead><tbody>`;
+  DAYS.forEach(day=>{const entries=state.timetable[w][day]||[];const study=entries.filter(x=>x.type==="study").reduce((a,x)=>a+x.duration,0);
+    html+=`<tr><td><strong>${day}</strong></td><td>${entries.map((x,i)=>`<div class="list-item" style="margin-bottom:7px"><div class="between"><span><strong>${x.type==="break"?"Dinner / Break":escapeHtml(subjectName(x.subject))}</strong> · ${minutesText(x.duration)}</span><span class="row"><button class="btn icon" data-action="edit-entry" data-week="${w}" data-day="${day}" data-index="${i}" aria-label="Edit entry">Edit</button><button class="btn icon" data-action="delete-entry" data-week="${w}" data-day="${day}" data-index="${i}" aria-label="Delete entry">Delete</button></span></div><div class="small muted">${escapeHtml(x.description)}</div></div>`).join("")}</td><td>${minutesText(study)}</td><td><div class="row wrap"><button class="btn primary" data-action="add-entry" data-week="${w}" data-day="${day}">Add</button><button class="btn" data-action="reset-day" data-week="${w}" data-day="${day}">Reset day</button></div></td></tr>`;
+  });
+  html+=`</tbody></table></div>`;document.getElementById("content").innerHTML=html;bindActions();
+}
+function renderCalendar(){
+  const year=calendarCursor.getFullYear(), month=calendarCursor.getMonth(), first=startOfMonth(calendarCursor), last=endOfMonth(calendarCursor), offset=(first.getDay()+6)%7;
+  let cells="";const heads=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];heads.forEach(h=>cells+=`<div class="cal-head">${h}</div>`);
+  const total=Math.ceil((offset+last.getDate())/7)*7;
+  for(let i=0;i<total;i++){const n=i-offset+1,d=new Date(year,month,n);const key=isoDate(d),other=d.getMonth()!==month, has=sessionsOn(key).length, selected=key===selectedDate;cells+=`<button class="cal-day ${other?"other":""} ${selected?"selected":""}" data-action="select-date" data-date="${key}"><div class="cal-num">${d.getDate()} ${has?'<span class="cal-dot"></span>':""}</div>${has?`<div class="small muted">${minutesText(actualMinutes(key))}</div>`:""}</button>`}
+  const daySessions=sessionsOn(selectedDate), subs=[...new Set(daySessions.map(s=>s.subject))];
+  document.getElementById("content").innerHTML=`<div class="card"><div class="calendar-head"><button class="btn" data-action="cal-prev">←</button><div style="text-align:center"><h2 style="margin:0">${calendarCursor.toLocaleString(undefined,{month:"long",year:"numeric"})}</h2><button class="btn ghost small" data-action="cal-today">Today</button></div><button class="btn" data-action="cal-next">→</button></div><div class="calendar-grid">${cells}</div></div>
+  <div class="card" style="margin-top:18px"><div class="eyebrow">${fmtDate(selectedDate)}</div><h2 style="margin:4px 0">Study record</h2>${daySessions.length?`<div class="kpi-grid"><div class="kpi"><div class="eyebrow">Study time</div><div class="value">${minutesText(actualMinutes(selectedDate))}</div></div><div class="kpi"><div class="eyebrow">Sessions</div><div class="value">${daySessions.length}</div></div><div class="kpi"><div class="eyebrow">Subjects</div><div class="value">${subs.length}</div></div><div class="kpi"><div class="eyebrow">Topics</div><div class="value">${new Set(daySessions.map(s=>s.topic).filter(Boolean)).size}</div></div></div>
+  <div class="list" style="margin-top:14px">${daySessions.map(s=>`<button class="list-item" style="text-align:left" data-action="view-session" data-session="${s.id}"><div class="between"><strong>${escapeHtml(subjectName(s.subject))}</strong><span class="pill">${minutesText(s.durationActual)}</span></div><div class="small muted">${escapeHtml(s.topic||"No topic")} · ${escapeHtml(s.objective||"No objective")}</div></button>`).join("")}</div>`:`<div class="empty">No completed study sessions on this date.</div>`}</div>`;
+  bindActions();
+}
+function renderHistory(){
+  document.getElementById("content").innerHTML=`<section class="card"><div class="between wrap"><div><div class="eyebrow">Chronological record</div><h2 style="margin:4px 0">Study history</h2></div><div class="row wrap"><button class="btn" data-action="quick-add">+ Add session</button></div></div>
+  <div class="form-grid" style="margin:16px 0"><label>Search<input id="histSearch" placeholder="Topic, objective, reflection…"></label><label>Subject<select id="histSubject"><option value="">All subjects</option>${SUBJECTS.map(s=>`<option value="${s.id}">${s.name}</option>`).join("")}</select></label><label>From<input type="date" id="histFrom"></label><label>To<input type="date" id="histTo"></label><label>Week<select id="histWeek"><option value="">Any week</option><option>A</option><option>B</option></select></label><label>Status<select id="histStatus"><option value="completed">Completed</option><option value="all">All statuses</option><option value="incomplete">Incomplete</option><option value="skipped">Skipped</option><option value="rescheduled">Rescheduled</option></select></label></div>
+  <div id="historyList"></div></section>`;
+  const rerender=()=>{const q=(document.getElementById("histSearch").value||"").toLowerCase(),sub=document.getElementById("histSubject").value,from=document.getElementById("histFrom").value,to=document.getElementById("histTo").value,w=document.getElementById("histWeek").value,status=document.getElementById("histStatus").value;
+    let rows=state.sessions.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.createdAt).localeCompare(String(a.createdAt))).filter(s=>(!q||JSON.stringify(s).toLowerCase().includes(q))&&(!sub||s.subject===sub)&&(!from||s.date>=from)&&(!to||s.date<=to)&&(!w||s.week===w)&&(status==="all"||s.status===status));
+    document.getElementById("historyList").innerHTML=rows.length?`<div class="list">${rows.slice(0,250).map(s=>`<button class="list-item" style="text-align:left" data-action="view-session" data-session="${s.id}"><div class="between"><strong>${escapeHtml(subjectName(s.subject))}</strong><span class="pill">${fmtDate(s.date,{day:"numeric",month:"short",year:"numeric"})} · ${minutesText(s.durationActual||0)}</span></div><div class="small muted">${escapeHtml(s.topic||"No topic")} · ${escapeHtml(s.objective||"No objective")} · ${escapeHtml(s.status)}</div></button>`).join("")}</div>`:`<div class="empty">No records match these filters.</div>`;
+  };
+  ["histSearch","histSubject","histFrom","histTo","histWeek","histStatus"].forEach(id=>document.getElementById(id).addEventListener("input",rerender));rerender();bindActions();
+}
+function renderProgress(){
+  const total=state.sessions.filter(s=>s.status==="completed").reduce((a,s)=>a+(s.durationActual||0),0),wk=weekMinutes(isoDate(new Date())),wp=weekPlanned(isoDate(new Date())),imps=state.weekendTasks.length,impDone=state.weekendTasks.filter(t=>t.completed).length;
+  document.getElementById("content").innerHTML=`<div class="grid">
+    <div class="kpi-grid"><div class="kpi"><div class="eyebrow">Total study</div><div class="value">${minutesText(total)}</div></div><div class="kpi"><div class="eyebrow">This week</div><div class="value">${minutesText(wk)}</div><div class="muted small">of ${minutesText(wp)} planned</div></div><div class="kpi"><div class="eyebrow">Completion</div><div class="value">${pct(wk,wp)}%</div></div><div class="kpi"><div class="eyebrow">Streak</div><div class="value">${currentStreak()} days</div></div></div>
+    <div class="grid grid-2"><div class="card"><div class="eyebrow">Weekly study</div><h2 style="margin:4px 0 14px">Last 8 weeks</h2><canvas class="chart" id="weeklyChart" aria-label="Weekly study chart"></canvas></div><div class="card"><div class="eyebrow">Subject breakdown</div><h2 style="margin:4px 0 14px">Completed hours</h2><canvas class="chart" id="subjectChart" aria-label="Subject breakdown chart"></canvas><div class="legend">${SUBJECTS.map(s=>`<span>${s.name}: ${minutesText(subjectMinutes(s.id))}</span>`).join("")}</div></div></div>
+    <div class="grid grid-2"><div class="card"><div class="eyebrow">Week A vs Week B</div><h2 style="margin:4px 0 12px">Completed study</h2><div class="kpi-grid"><div class="kpi"><div class="eyebrow">Week A</div><div class="value">${minutesText(state.sessions.filter(s=>s.week==="A"&&s.status==="completed").reduce((a,s)=>a+s.durationActual,0))}</div></div><div class="kpi"><div class="eyebrow">Week B</div><div class="value">${minutesText(state.sessions.filter(s=>s.week==="B"&&s.status==="completed").reduce((a,s)=>a+s.durationActual,0))}</div></div></div></div>
+    <div class="card"><div class="eyebrow">Improvements</div><h2 style="margin:4px 0 12px">Reflection → action</h2><div class="kpi-grid"><div class="kpi"><div class="eyebrow">Created</div><div class="value">${imps}</div></div><div class="kpi"><div class="eyebrow">Completed</div><div class="value">${impDone}</div></div><div class="kpi"><div class="eyebrow">Outstanding</div><div class="value">${state.weekendTasks.filter(t=>!t.completed).length}</div></div><div class="kpi"><div class="eyebrow">Pressing</div><div class="value">${state.pressing.filter(t=>!t.completed).length}</div></div></div></div></div>
+  </div>`;
+  drawCharts();bindActions();
+}
+function drawCharts(){
+  const c=document.getElementById("weeklyChart");if(c){const ctx=c.getContext("2d"),w=c.width=c.clientWidth*devicePixelRatio,h=c.height=c.clientHeight*devicePixelRatio;ctx.scale(devicePixelRatio,devicePixelRatio);const W=c.clientWidth,H=c.clientHeight;ctx.clearRect(0,0,W,H);const vals=[];let d=weekStart(isoDate(new Date()));d.setDate(d.getDate()-49);for(let i=0;i<8;i++){const k=isoDate(d);vals.push(weekMinutes(k)/60);d.setDate(d.getDate()+7)}const max=Math.max(1,...vals),bw=W/8*.55;ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--line");ctx.beginPath();ctx.moveTo(35,H-30);ctx.lineTo(W-10,H-30);ctx.stroke();vals.forEach((v,i)=>{const bh=(H-55)*(v/max),x=45+i*(W-55)/8;ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--accent");ctx.fillRect(x,H-30-bh,bw,bh);ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--muted");ctx.font="10px sans-serif";ctx.fillText(`${Math.round(v)}h`,x,H-35-bh);ctx.fillText(`W${i+1}`,x,H-14)})}
+  const c2=document.getElementById("subjectChart");if(c2){const ctx=c2.getContext("2d"),dpr=devicePixelRatio;const W=c2.clientWidth,H=c2.clientHeight;c2.width=W*dpr;c2.height=H*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);const vals=SUBJECTS.map(s=>subjectMinutes(s.id)/60),max=Math.max(1,...vals);vals.forEach((v,i)=>{const y=18+i*48;ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--muted");ctx.font="11px sans-serif";ctx.fillText(SUBJECTS[i].name,0,y);ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--accent");ctx.fillRect(125,y-11,(W-145)*(v/max),18);ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--ink");ctx.fillText(`${v.toFixed(1)}h`,130+(W-145)*(v/max),y+3)})}
+}
+function renderSubjects(){
+  const cards=SUBJECTS.map(s=>{const ss=subjectSessions(s.id).sort((a,b)=>b.date.localeCompare(a.date));const improvements=ss.filter(x=>x.improvement).slice(0,4);const topics=state.topics.filter(t=>t.subject===s.id&&!t.archived);
+    return `<section class="card"><div class="between"><div><div class="eyebrow">Subject</div><h2 style="margin:4px 0">${s.name}</h2></div><span class="pill">${minutesText(subjectMinutes(s.id))}</span></div><div class="kpi-grid" style="margin:14px 0"><div class="kpi"><div class="eyebrow">Sessions</div><div class="value">${ss.length}</div></div><div class="kpi"><div class="eyebrow">Streak</div><div class="value">${subjectStreak(s.id)}</div></div><div class="kpi"><div class="eyebrow">Topics</div><div class="value">${topics.length}</div></div><div class="kpi"><div class="eyebrow">Improvements</div><div class="value">${ss.filter(x=>x.improvement).length}</div></div></div><div class="small muted">Recent sessions</div><div class="list" style="margin-top:8px">${ss.slice(0,3).map(x=>`<button class="list-item" style="text-align:left" data-action="view-session" data-session="${x.id}"><strong>${escapeHtml(x.topic||"Untitled topic")}</strong><div class="small muted">${fmtDate(x.date,{day:"numeric",month:"short"})} · ${minutesText(x.durationActual)}</div></button>`).join("")||`<div class="empty">No completed sessions yet.</div>`}</div>${improvements.length?`<div class="small muted" style="margin-top:12px">Recent improvements</div><div class="list" style="margin-top:8px">${improvements.map(x=>`<div class="list-item small">${escapeHtml(x.improvement)}</div>`).join("")}</div>`:""}</section>`});
+  document.getElementById("content").innerHTML=`<div class="between wrap"><div><div class="eyebrow">Four subjects</div><h2 style="margin:4px 0">Subject dashboards</h2></div><button class="btn" data-action="topics">Manage topics</button></div><div class="grid grid-2" style="margin-top:18px">${cards.join("")}</div>`;bindActions();
+}
+function subjectStreak(id){const dates=new Set(subjectSessions(id).map(s=>s.date));let d=new Date();d.setHours(12,0,0,0);let n=0;while(dates.has(isoDate(d))){n++;d.setDate(d.getDate()-1)}return n+" days";}
+function renderWeekend(){
+  const monday=weekStart(isoDate(new Date()));const tasks=state.weekendTasks.slice().sort((a,b)=>Number(a.completed)-Number(b.completed));
+  document.getElementById("content").innerHTML=`<div class="between wrap"><div><div class="eyebrow">Reflection → action</div><h2 style="margin:4px 0">Weekend Agenda</h2><p class="muted">Monday–Friday improvements are collected here. Duplicate active tasks are prevented.</p></div><button class="btn" data-action="generate-weekend">Generate from improvements</button></div><div class="list" style="margin-top:18px">${tasks.length?tasks.map(t=>`<div class="list-item"><div class="between wrap"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-task-check="${t.id}" ${t.completed?"checked":""}> <strong>${escapeHtml(t.task)}</strong></label><span class="pill">${escapeHtml(t.assignedDay||"Weekend")}</span></div><div class="small muted">${subjectName(t.subject)} · source ${fmtDate(t.originalDate,{day:"numeric",month:"short"})}</div><div class="small" style="margin-top:6px">${escapeHtml(t.originalImprovement)}</div><div class="row wrap" style="margin-top:9px"><button class="btn" data-action="edit-weekend" data-id="${t.id}">Edit</button><button class="btn danger" data-action="delete-weekend" data-id="${t.id}">Delete</button></div></div>`).join(""):`<div class="empty">No weekend improvement tasks yet. Complete a weekday reflection with an improvement, then generate the agenda.</div>`}</div>`;
+  bindActions();
+}
+function renderPressing(){
+  const tasks=state.pressing.slice().sort((a,b)=>Number(a.completed)-Number(b.completed));
+  document.getElementById("content").innerHTML=`<div class="between wrap"><div><div class="eyebrow">Academic inbox</div><h2 style="margin:4px 0">Pressing Matters</h2><p class="muted">Incomplete weekend improvements are retained and escalated rather than deleted.</p></div><button class="btn" data-action="escalate">Check for escalations</button></div><div class="list" style="margin-top:18px">${tasks.length?tasks.map(t=>`<div class="list-item"><div class="between wrap"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-press-check="${t.id}" ${t.completed?"checked":""}> <strong>${escapeHtml(t.task)}</strong></label><span class="pill">${t.priority||"Normal"}</span></div><div class="small muted">${subjectName(t.subject)} · ${fmtDate(t.originalDate,{day:"numeric",month:"short"})} · ${daysOutstanding(t)} days outstanding</div><div class="small" style="margin-top:6px">${escapeHtml(t.notes||"")}</div><div class="row wrap" style="margin-top:9px"><button class="btn" data-action="snooze" data-id="${t.id}">Snooze</button></div></div>`).join(""):`<div class="empty">Nothing has been escalated. Incomplete weekend tasks will appear here when the week closes.</div>`}</div>`;
+  bindActions();
+}
+function daysOutstanding(t){return Math.max(0,Math.floor((Date.now()-new Date(t.originalDate+"T12:00:00"))/86400000))}
+function renderSettings(){
+  document.getElementById("content").innerHTML=`<div class="grid grid-2">
+  <section class="card"><div class="eyebrow">Appearance</div><h2 class="card-title">Theme</h2><label style="margin-top:12px">Theme<select id="themeSelect">${Object.entries(THEMES).map(([k,v])=>`<option value="${k}" ${state.settings.theme===k?"selected":""}>${v}</option>`).join("")}</select></label></section>
+  <section class="card"><div class="eyebrow">Timetable</div><h2 class="card-title">Week system</h2><label style="margin-top:12px">Active week<select id="weekSelect"><option value="A" ${state.settings.week==="A"?"selected":""}>Week A</option><option value="B" ${state.settings.week==="B"?"selected":""}>Week B</option></select></label><div class="row wrap" style="margin-top:12px"><button class="btn" data-action="open-timetable">Open editor</button><button class="btn danger" data-action="reset-timetable">Reset timetable</button></div></section>
+  <section class="card"><div class="eyebrow">Topics</div><h2 class="card-title">User-managed topics</h2><p class="muted small">Create subjects and subtopics without inventing an exam specification.</p><button class="btn primary" data-action="topics">Manage topics</button></section>
+  <section class="card"><div class="eyebrow">Notifications</div><h2 class="card-title">Reminders</h2><p class="small">Permission: ${"Notification" in window?Notification.permission:"unsupported"}</p><label>Enable notifications<select id="notifySelect"><option value="false" ${!state.settings.notifications?"selected":""}>Off</option><option value="true" ${state.settings.notifications?"selected":""}>On</option></select></label><label style="margin-top:10px">Reminder frequency<select id="reminderSelect">${["daily","twice-daily","weekly"].map(x=>`<option ${state.settings.reminder===x?"selected":""}>${x}</option>`).join("")}</select></label><button class="btn" style="margin-top:10px" data-action="request-notifications">Request permission</button></section>
+  <section class="card"><div class="eyebrow">Data</div><h2 class="card-title">Backup & restore</h2><div class="row wrap" style="margin-top:12px"><button class="btn primary" data-action="export">Export data</button><button class="btn" data-action="import">Import data</button><button class="btn danger" data-action="clear-data">Clear all data</button></div><p class="muted small" style="margin-top:12px">Storage: ${storageMode}. Data stays in this browser unless you export it.</p></section>
+  <section class="card"><div class="eyebrow">General</div><h2 class="card-title">Preferences</h2><label>Clock<select id="clockSelect"><option value="true" ${state.settings.clock24?"selected":""}>24-hour</option><option value="false" ${!state.settings.clock24?"selected":""}>12-hour</option></select></label><label style="margin-top:10px">First day of week<select id="firstDay"><option value="1" ${state.settings.firstDay===1?"selected":""}>Monday</option><option value="0" ${state.settings.firstDay===0?"selected":""}>Sunday</option></select></label></section>
+  </div>`;
+  ["themeSelect","weekSelect","notifySelect","reminderSelect","clockSelect","firstDay"].forEach(id=>document.getElementById(id).addEventListener("change",async e=>{if(id==="themeSelect")state.settings.theme=e.target.value;if(id==="weekSelect")state.settings.week=e.target.value;if(id==="notifySelect")state.settings.notifications=e.target.value==="true";if(id==="reminderSelect")state.settings.reminder=e.target.value;if(id==="clockSelect")state.settings.clock24=e.target.value==="true";if(id==="firstDay")state.settings.firstDay=Number(e.target.value);applyTheme();await persistSettings();renderPage();}));
+  bindActions();
+}
+function openModal(html,onOpen){
+  const bd=document.getElementById("modalBackdrop"),m=document.getElementById("modal");m.innerHTML=html;bd.classList.add("open");
+  const close=()=>closeModal();m.querySelectorAll("[data-close]").forEach(b=>b.onclick=close);bd.onclick=e=>{if(e.target===bd)close()};document.addEventListener("keydown",escClose);modalCleanup=()=>document.removeEventListener("keydown",escClose);function escClose(e){if(e.key==="Escape")close()};onOpen?.(m);
+}
+function closeModal(){document.getElementById("modalBackdrop").classList.remove("open");modalCleanup?.();modalCleanup=null;stopTimerLoop();}
+function topicOptions(subject,selected=""){return `<option value="">No topic</option>`+state.topics.filter(t=>t.subject===subject&&!t.archived).map(t=>`<option value="${escapeHtml(t.id)}" ${t.id===selected?"selected":""}>${escapeHtml(t.name)}${t.subtopic?" · "+escapeHtml(t.subtopic):""}</option>`).join("")}
+function openPrepare(item,day,week){
+  const planned=item?.duration||60, subject=item?.subject||"mathematics";
+  openModal(`<div class="modal-head"><div><div class="eyebrow">Before you begin</div><h2 id="modalTitle">Prepare session</h2></div><button class="btn" data-close>Close</button></div>
+  <div class="form-grid"><label>Subject<select id="prepSubject">${SUBJECTS.map(s=>`<option value="${s.id}" ${s.id===subject?"selected":""}>${s.name}</option>`).join("")}</select></label><label>Planned duration<input id="prepDuration" type="number" min="5" max="720" value="${planned}"></label><label class="full">What are you going to accomplish?<textarea id="prepObjective" required placeholder="Define the result you want from this session."></textarea></label><label>Topic<select id="prepTopic">${topicOptions(subject)}</select><button type="button" class="btn" id="prepManageTopics">Create / manage topics</button></label><label>Specific questions / pages / tasks<textarea id="prepTasks" placeholder="Optional"></textarea></label><label class="full">Target outcome<textarea id="prepOutcome" placeholder="Optional"></textarea></label><label class="full">Notes<textarea id="prepNotes" placeholder="Optional"></textarea></label></div><div class="modal-actions"><button class="btn primary" id="beginSession">Begin session</button></div>`,
+  m=>{m.querySelector("#prepSubject").onchange=()=>{m.querySelector("#prepTopic").innerHTML=topicOptions(m.querySelector("#prepSubject").value)};m.querySelector("#prepManageTopics").onclick=()=>openTopics();m.querySelector("#beginSession").onclick=async()=>{const objective=m.querySelector("#prepObjective").value.trim();if(!objective){showToast("Add an objective before beginning.");return}await beginTimer({subject:m.querySelector("#prepSubject").value,durationPlanned:Number(m.querySelector("#prepDuration").value),topicId:m.querySelector("#prepTopic").value,objective,specificTasks:m.querySelector("#prepTasks").value.trim(),targetOutcome:m.querySelector("#prepOutcome").value.trim(),notes:m.querySelector("#prepNotes").value.trim(),date:isoDate(new Date()),week:week||weekForDate(new Date()),day:day||dayName(new Date()),timetableId:item?.id||null});}});
+}
+async function beginTimer(data){
+  const topic=state.topics.find(t=>t.id===data.topicId);const now=Date.now();const timer={id:uid(),...data,topic:topic?.name||"",startAt:now,pausedMs:0,pausedAt:null,status:"running",elapsedBefore:0};
+  state.activeTimer=timer;await dbPut("activeTimer",timer);closeModal();openTimerModal();
+}
+function timerElapsed(t){const now=Date.now();return Math.max(0,Math.floor(((t.pausedAt||now)-t.startAt-t.pausedMs)/1000)+Math.floor((t.elapsedBefore||0)/1000));}
+function timerRemaining(t){return Math.max(0,t.durationPlanned*60-timerElapsed(t))}
+function fmtTimer(sec){sec=Math.max(0,Math.floor(sec));return `${String(Math.floor(sec/3600)).padStart(2,"0")}:${String(Math.floor(sec%3600/60)).padStart(2,"0")}:${String(sec%60).padStart(2,"0")}`}
+function startTimerLoop(){stopTimerLoop();timerInterval=setInterval(()=>{if(state.activeTimer){const r=timerRemaining(state.activeTimer);updateTimerDOM();if(r<=0)completeTimer();}},500)}
+function stopTimerLoop(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}}
+function updateTimerDOM(){const t=state.activeTimer;if(!t)return;const el=document.querySelector("#modal #timerModal");if(!el)return;const elapsed=timerElapsed(t),remain=timerRemaining(t),total=t.durationPlanned*60,p=Math.min(100,Math.round(elapsed/total*100));el.style.setProperty("--pct",`${p}%`);el.querySelector(".timer-time").textContent=fmtTimer(remain);el.querySelector(".timer-elapsed").textContent=`${fmtTimer(elapsed)} elapsed · ${p}% complete`;const b=el.querySelector("[data-action=toggle-pause]");if(b)b.textContent=t.pausedAt?"Resume":"Pause";}
+function openTimerModal(){
+  const t=state.activeTimer;if(!t)return;openModal(`<div id="timerModal" style="--pct:0%"><div class="modal-head"><div><div class="eyebrow">Focused study</div><h2 id="modalTitle">${escapeHtml(subjectName(t.subject))}</h2><div class="muted">${escapeHtml(t.topic||"No topic")}</div></div><button class="btn" data-close>Close</button></div><div class="timer"><div class="ring"><div class="ring-inner"><div class="timer-time">00:00:00</div><div class="timer-elapsed">0:00:00 elapsed · 0% complete</div></div></div><div class="card" style="width:min(600px,100%);text-align:left"><div class="eyebrow">Objective</div><div>${escapeHtml(t.objective)}</div>${t.specificTasks?`<div class="eyebrow" style="margin-top:12px">Tasks</div><div>${escapeHtml(t.specificTasks)}</div>`:""}</div><div class="row wrap" style="justify-content:center;margin-top:18px"><button class="btn primary" data-action="toggle-pause">Pause</button><button class="btn secondary" data-action="finish-timer">Finish early</button></div></div></div>`,()=>{updateTimerDOM();startTimerLoop()});
+}
+async function togglePause(){
+  const t=state.activeTimer;if(!t)return;
+  if(t.pausedAt){t.pausedMs+=(Date.now()-t.pausedAt);t.pausedAt=null;t.status="running"}else{t.pausedAt=Date.now();t.status="paused"}
+  await dbPut("activeTimer",t);updateTimerDOM();
+}
+async function finishTimer(){await completeTimer(true)}
+async function completeTimer(early=false){
+  const t=state.activeTimer;if(!t)return;stopTimerLoop();const elapsed=Math.min(t.durationPlanned*60,timerElapsed(t));t.status="awaiting-reflection";t.durationActual=Math.max(1,Math.round(elapsed/60));t.completedAt=new Date().toISOString();state.activeTimer=t;await dbPut("activeTimer",t);openReflection(t,early)}
+function openReflection(t,early){
+  openModal(`<div class="modal-head"><div><div class="eyebrow">Session complete</div><h2 id="modalTitle">Continue to reflection</h2><div class="muted">${subjectName(t.subject)} · ${minutesText(t.durationActual)}</div></div></div>
+  <div class="form-grid"><label class="full">What went well?<textarea id="refGood"></textarea></label><label class="full">What could I improve?<textarea id="refImprove"></textarea></label><label class="full">What did I actually cover?<textarea id="refCovered"></textarea></label><label>How difficult was this session?<select id="refDiff">${[1,2,3,4,5].map(n=>`<option value="${n}">${n} / 5</option>`).join("")}</select></label><label>Did you complete the original objective?<select id="refStatus"><option value="yes">Yes</option><option value="partial">Partially</option><option value="no">No</option></select></label></div><div class="modal-actions"><button class="btn primary" id="saveReflection">Save reflection</button></div>`,
+  m=>m.querySelector("#saveReflection").onclick=async()=>{const improvement=m.querySelector("#refImprove").value.trim();const s={id:uid(),date:t.date,week:t.week,day:t.day,subject:t.subject,durationPlanned:t.durationPlanned,durationActual:t.durationActual,topic:t.topic,topicId:t.topicId||null,objective:t.objective,specificTasks:t.specificTasks,targetOutcome:t.targetOutcome,notes:t.notes,actualWork:m.querySelector("#refCovered").value.trim(),wentWell:m.querySelector("#refGood").value.trim(),improvement,difficulty:Number(m.querySelector("#refDiff").value),objectiveStatus:m.querySelector("#refStatus").value,status:"completed",createdAt:new Date().toISOString(),completedAt:t.completedAt,timetableId:t.timetableId||null};await dbPut("sessions",s);state.sessions.push(s);await dbDelete("activeTimer",t.id);state.activeTimer=null;await generateWeekendTasks();closeModal();showToast("Session saved to your study history.");renderPage();});
+}
+async function markPlanned(item,day,week,status="completed"){
+  const s={id:uid(),date:isoDate(new Date()),week,day,subject:item.subject,durationPlanned:item.duration,durationActual:status==="completed"?item.duration:0,topic:"",objective:item.description,specificTasks:"",targetOutcome:"",notes:"",actualWork:"",wentWell:"",improvement:"",difficulty:null,objectiveStatus:status==="completed"?"yes":"no",status,createdAt:new Date().toISOString(),completedAt:status==="completed"?new Date().toISOString():null,timetableId:item.id};
+  await dbPut("sessions",s);state.sessions.push(s);showToast(status==="completed"?"Planned session marked complete.":"Session marked incomplete.");renderPage();
+}
+function quickAdd(){
+  openModal(`<div class="modal-head"><div><div class="eyebrow">Independent study</div><h2 id="modalTitle">Add session</h2></div><button class="btn" data-close>Close</button></div><div class="form-grid"><label>Subject<select id="qaSub">${SUBJECTS.map(s=>`<option value="${s.id}">${s.name}</option>`).join("")}</select></label><label>Date<input id="qaDate" type="date" value="${isoDate(new Date())}"></label><label>Duration (minutes)<input id="qaDur" type="number" min="5" max="720" value="60"></label><label>Topic<select id="qaTopic">${topicOptions("mathematics")}</select><button type="button" class="btn" id="qaManageTopics">Create / manage topics</button></label><label class="full">Objective<textarea id="qaObj" required></textarea></label><label class="full">Notes<textarea id="qaNotes"></textarea></label><label class="full"><span><input type="checkbox" id="qaTimetable" style="width:auto"> Add this to timetable</span></label></div><div class="modal-actions"><button class="btn primary" id="qaSave">Add session</button></div>`,
+  m=>{m.querySelector("#qaSub").onchange=()=>m.querySelector("#qaTopic").innerHTML=topicOptions(m.querySelector("#qaSub").value);m.querySelector("#qaSave").onclick=async()=>{const obj=m.querySelector("#qaObj").value.trim();if(!obj){showToast("Add an objective.");return}const sub=m.querySelector("#qaSub").value,date=m.querySelector("#qaDate").value,dur=Number(m.querySelector("#qaDur").value),topic=state.topics.find(x=>x.id===m.querySelector("#qaTopic").value);if(!date||!dur||dur<5){showToast("Check the date and duration.");return}const s={id:uid(),date,week:weekForDate(new Date(date+"T12:00:00")),day:dayName(new Date(date+"T12:00:00")),subject:sub,durationPlanned:dur,durationActual:dur,topic:topic?.name||"",topicId:topic?.id||null,objective:obj,specificTasks:"",targetOutcome:"",notes:m.querySelector("#qaNotes").value.trim(),actualWork:"",wentWell:"",improvement:"",difficulty:null,objectiveStatus:"yes",status:"completed",createdAt:new Date().toISOString(),completedAt:new Date().toISOString(),timetableId:null};await dbPut("sessions",s);state.sessions.push(s);if(m.querySelector("#qaTimetable").checked){const w=weekForDate(new Date(date+"T12:00:00"));const day=dayName(new Date(date+"T12:00:00"));state.timetable[w][day].push(D(sub,dur,obj));await dbPut("timetable",{id:"main",data:state.timetable})}closeModal();showToast("Independent session added.");renderPage();}});
+}
+function openTopics(){
+  openModal(`<div class="modal-head"><div><div class="eyebrow">User-managed topics</div><h2 id="modalTitle">Topics</h2></div><button class="btn" data-close>Close</button></div><div class="row wrap"><button class="btn primary" id="newTopic">Create topic</button></div><div class="list" id="topicList" style="margin-top:14px"></div>`,m=>{const draw=()=>{m.querySelector("#topicList").innerHTML=state.topics.length?state.topics.map(t=>`<div class="list-item"><div class="between"><div><strong>${escapeHtml(t.name)}</strong><div class="small muted">${subjectName(t.subject)}${t.subtopic?" · "+escapeHtml(t.subtopic):""}${t.archived?" · archived":""}</div></div><div class="row"><button class="btn" data-topic-edit="${t.id}">Rename</button><button class="btn danger" data-topic-del="${t.id}">Delete</button></div></div></div>`).join(""):`<div class="empty">No topics created yet.</div>`;m.querySelectorAll("[data-topic-edit]").forEach(b=>b.onclick=()=>topicForm(b.dataset.topicEdit,draw));m.querySelectorAll("[data-topic-del]").forEach(b=>b.onclick=async()=>{const t=state.topics.find(x=>x.id===b.dataset.topicDel);if(!confirm(`Archive topic "${t.name}"? Historical sessions will remain unchanged.`))return;t.archived=true;await dbPut("topics",t);draw()})};m.querySelector("#newTopic").onclick=()=>topicForm(null,draw);draw()});
+}
+function topicForm(id,refresh){
+ const old=id?state.topics.find(t=>t.id===id):null;
+ openModal(`<div class="modal-head"><div><div class="eyebrow">Topic</div><h2 id="modalTitle">${old?"Rename topic":"Create topic"}</h2></div><button class="btn" data-close>Close</button></div><div class="form-grid"><label>Subject<select id="tfSub">${SUBJECTS.map(s=>`<option value="${s.id}" ${old?.subject===s.id?"selected":""}>${s.name}</option>`).join("")}</select></label><label>Name<input id="tfName" value="${escapeHtml(old?.name||"")}" required></label><label class="full">Subtopic (optional)<input id="tfSubtopic" value="${escapeHtml(old?.subtopic||"")}"></label></div><div class="modal-actions"><button class="btn primary" id="tfSave">Save topic</button></div>`,m=>m.querySelector("#tfSave").onclick=async()=>{try{const name=m.querySelector("#tfName").value.trim();if(!name){showToast("Add a topic name.");m.querySelector("#tfName").focus();return}let t=old||{id:uid(),createdAt:new Date().toISOString(),archived:false};t.subject=m.querySelector("#tfSub").value;t.name=name;t.subtopic=m.querySelector("#tfSubtopic").value.trim();t.archived=false;await dbPut("topics",t);if(!old)state.topics.push(t);else{const i=state.topics.findIndex(x=>x.id===t.id);if(i>=0)state.topics[i]=t}closeModal();showToast(old?"Topic updated.":"Topic created.");openTopics()}catch(e){console.error(e);showToast("The topic could not be saved. Your existing topics are unchanged.")}});
+}
+function openTimetableEntry(week,day,index=null){
+  const old=index!==null?state.timetable[week][day][index]:null;
+  openModal(`<div class="modal-head"><div><div class="eyebrow">Timetable editor</div><h2 id="modalTitle">${old?"Edit entry":"Add entry"}</h2></div><button class="btn" data-close>Close</button></div><div class="form-grid"><label>Day<select id="teDay">${DAYS.map(d=>`<option ${d===day?"selected":""}>${d}</option>`).join("")}</select></label><label>Session type<select id="teType"><option value="study" ${old?.type!=="break"?"selected":""}>Study</option><option value="break" ${old?.type==="break"?"selected":""}>Dinner / Break</option></select></label><label>Subject<select id="teSub">${SUBJECTS.map(s=>`<option value="${s.id}" ${old?.subject===s.id?"selected":""}>${s.name}</option>`).join("")}</select></label><label>Duration (minutes)<input id="teDur" type="number" min="5" max="720" value="${old?.duration||60}"></label><label class="full">Description<textarea id="teDesc">${escapeHtml(old?.description||"")}</textarea></label></div><div class="modal-actions"><button class="btn primary" id="teSave">Save entry</button></div>`,
+  m=>{const toggle=()=>{const study=m.querySelector("#teType").value==="study";m.querySelector("#teSub").disabled=!study;if(!study)m.querySelector("#teDesc").value=m.querySelector("#teDesc").value||"Dinner / Break"};m.querySelector("#teType").onchange=toggle;toggle();m.querySelector("#teSave").onclick=async()=>{const type=m.querySelector("#teType").value,dur=Number(m.querySelector("#teDur").value),nd=m.querySelector("#teDay").value;if(!dur||dur<5){showToast("Duration must be at least 5 minutes.");return}const entry={id:old?.id||uid(),subject:type==="study"?m.querySelector("#teSub").value:"break",duration:dur,description:m.querySelector("#teDesc").value.trim()||"Study session",type};if(index!==null){state.timetable[week][day].splice(index,1);state.timetable[week][nd].push(entry)}else state.timetable[week][nd].push(entry);await dbPut("timetable",{id:"main",data:state.timetable});closeModal();renderTimetable()}})
+}
+function bindActions(){
+  document.querySelectorAll("[data-action]").forEach(b=>{b.onclick=async()=>{const a=b.dataset.action;try{
+    if(a==="retry-page"){renderPage();return}
+    else if(a==="safe-reset-timetable"){state.timetable=clone(DEFAULT_TIMETABLE);await dbPut("timetable",{id:"main",data:state.timetable});showToast("Timetable repaired.");renderPage();return}
+    else if(a==="quick-add")quickAdd();
+    else if(a==="go-settings")navigate("settings");
+    else if(a==="start"){const item=state.timetable[b.dataset.week][b.dataset.day].find(x=>x.id===b.dataset.item);openPrepare(item,b.dataset.day,b.dataset.week)}
+    else if(a==="complete-planned"){const item=state.timetable[b.dataset.week][b.dataset.day].find(x=>x.id===b.dataset.item);await markPlanned(item,b.dataset.day,b.dataset.week)}
+    else if(a==="mark-planned"){const item=state.timetable[b.dataset.week][b.dataset.day].find(x=>x.id===b.dataset.item);await markPlanned(item,b.dataset.day,b.dataset.week,b.dataset.status)}
+    else if(a==="view-session")viewSession(b.dataset.session);
+    else if(a==="open-timer")openTimerModal();
+    else if(a==="toggle-pause")await togglePause();
+    else if(a==="finish-timer")await finishTimer();
+    else if(a==="set-week"){state.settings.week=b.dataset.week;await persistSettings();renderPage()}
+    else if(a==="reset-week"){if(confirm(`Reset Week ${b.dataset.week} to the supplied defaults?`)){state.timetable[b.dataset.week]=clone(DEFAULT_TIMETABLE[b.dataset.week]);await dbPut("timetable",{id:"main",data:state.timetable});renderTimetable()}}
+    else if(a==="reset-day"){if(confirm(`Reset ${b.dataset.day} in Week ${b.dataset.week} to its supplied default?`)){state.timetable[b.dataset.week][b.dataset.day]=clone(DEFAULT_TIMETABLE[b.dataset.week][b.dataset.day]);await dbPut("timetable",{id:"main",data:state.timetable});renderTimetable()}}
+    else if(a==="reset-timetable"){if(confirm("Reset the entire timetable to the supplied Week A and Week B defaults?")){state.timetable=clone(DEFAULT_TIMETABLE);await dbPut("timetable",{id:"main",data:state.timetable});renderPage();showToast("Timetable reset.")}}
+    else if(a==="add-entry")openTimetableEntry(b.dataset.week,b.dataset.day);
+    else if(a==="edit-entry")openTimetableEntry(b.dataset.week,b.dataset.day,Number(b.dataset.index));
+    else if(a==="delete-entry"){if(confirm("Delete this timetable entry?")){state.timetable[b.dataset.week][b.dataset.day].splice(Number(b.dataset.index),1);await dbPut("timetable",{id:"main",data:state.timetable});renderTimetable()}}
+    else if(a==="open-timetable")navigate("timetable");
+    else if(a==="cal-prev"){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar()}
+    else if(a==="cal-next"){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar()}
+    else if(a==="cal-today"){calendarCursor=new Date();selectedDate=isoDate(new Date());renderCalendar()}
+    else if(a==="select-date"){selectedDate=b.dataset.date;calendarCursor=new Date(selectedDate+"T12:00:00");renderCalendar()}
+    else if(a==="topics")openTopics();
+    else if(a==="weekly-review")openWeeklyReview();
+    else if(a==="generate-weekend"){await generateWeekendTasks();showToast("Weekend agenda refreshed.");renderWeekend()}
+    else if(a==="escalate"){await escalatePressing();showToast("Pressing Matters checked.");renderPressing()}
+    else if(a==="edit-weekend")editWeekend(b.dataset.id);
+    else if(a==="delete-weekend"){if(confirm("Delete this weekend task?")){await dbDelete("weekendTasks",b.dataset.id);state.weekendTasks=state.weekendTasks.filter(x=>x.id!==b.dataset.id);renderWeekend()}}
+    else if(a==="snooze")snoozePressing(b.dataset.id);
+    else if(a==="request-notifications")requestNotifications();
+    else if(a==="export")exportData();
+    else if(a==="import")document.getElementById("importInput").click();
+    else if(a==="clear-data")await clearData();
+  }catch(e){console.error("Button action failed:",a,e);showToast(`Could not complete "${a}".`)}}});
+  document.querySelectorAll("[data-task-check]").forEach(x=>x.onchange=async()=>{const t=state.weekendTasks.find(t=>t.id===x.dataset.taskCheck);t.completed=x.checked;t.completedAt=x.checked?new Date().toISOString():null;await dbPut("weekendTasks",t);renderWeekend()});
+  document.querySelectorAll("[data-press-check]").forEach(x=>x.onchange=async()=>{const t=state.pressing.find(t=>t.id===x.dataset.pressCheck);t.completed=x.checked;t.completedAt=x.checked?new Date().toISOString():null;await dbPut("pressing",t);renderPressing()});
+}
+function viewSession(id){
+  const s=state.sessions.find(x=>x.id===id);if(!s){showToast("Session record not found.");return}
+  openModal(`<div class="modal-head"><div><div class="eyebrow">${fmtDate(s.date,{day:"numeric",month:"long",year:"numeric"})}</div><h2 id="modalTitle">${escapeHtml(subjectName(s.subject))}</h2><div class="muted">${minutesText(s.durationActual||0)} actual · ${escapeHtml(s.status)}</div></div><button class="btn" data-close>Close</button></div>
+  <div class="list"><div class="list-item"><strong>Topic</strong><div>${escapeHtml(s.topic||"None")}</div></div><div class="list-item"><strong>Objective</strong><div>${escapeHtml(s.objective||"None")}</div></div><div class="list-item"><strong>Specific tasks</strong><div>${escapeHtml(s.specificTasks||"None")}</div></div><div class="list-item"><strong>Target outcome</strong><div>${escapeHtml(s.targetOutcome||"None")}</div></div><div class="list-item"><strong>What I covered</strong><div>${escapeHtml(s.actualWork||"None")}</div></div><div class="list-item"><strong>What went well</strong><div>${escapeHtml(s.wentWell||"None")}</div></div><div class="list-item"><strong>Improvement</strong><div>${escapeHtml(s.improvement||"None")}</div></div><div class="list-item"><strong>Difficulty</strong><div>${s.difficulty?`${s.difficulty} / 5`:"Not recorded"} · Objective: ${escapeHtml(s.objectiveStatus||"")}</div></div></div>`);
+}
+function openWeeklyReview(){
+  const end=weekDates(isoDate(new Date())).slice(-1)[0], existing=state.weeklyReviews.find(r=>r.weekStart===weekDates(isoDate(new Date()))[0]);
+  const dates=weekDates(isoDate(new Date())), completed=state.sessions.filter(s=>dates.includes(s.date)&&s.status==="completed"), planned=weekPlanned(isoDate(new Date())), actual=completed.reduce((a,s)=>a+s.durationActual,0);
+  const bySubject=SUBJECTS.map(s=>({name:s.name,count:completed.filter(x=>x.subject===s.id).length}));
+  const strongest=bySubject.slice().sort((a,b)=>b.count-a.count)[0];
+  const missed=state.sessions.filter(s=>dates.includes(s.date)&&["incomplete","skipped"].includes(s.status)).length;
+  const rescheduled=state.sessions.filter(s=>dates.includes(s.date)&&s.status==="rescheduled").length;
+  const improvements=completed.filter(s=>s.improvement).length;
+  const improvementIds=new Set(completed.filter(s=>s.improvement).map(s=>s.id));
+  const improvementsDone=state.weekendTasks.filter(t=>improvementIds.has(t.sourceSession)&&t.completed).length;
+  openModal(`<div class="modal-head"><div><div class="eyebrow">Week ending ${fmtDate(end,{day:"numeric",month:"long"})}</div><h2 id="modalTitle">Weekly review</h2></div><button class="btn" data-close>Close</button></div>
+  <div class="kpi-grid"><div class="kpi"><div class="eyebrow">Planned hours</div><div class="value">${minutesText(planned)}</div></div><div class="kpi"><div class="eyebrow">Completed</div><div class="value">${minutesText(actual)}</div></div><div class="kpi"><div class="eyebrow">Completion</div><div class="value">${pct(actual,planned)}%</div></div><div class="kpi"><div class="eyebrow">Strongest subject</div><div class="value" style="font-size:17px">${escapeHtml(strongest?.name||"—")}</div></div></div>
+  <div class="list" style="margin-top:14px"><div class="list-item"><strong>Subject breakdown</strong><div class="small muted">${bySubject.map(x=>`${escapeHtml(x.name)}: ${x.count} sessions`).join(" · ")}</div></div><div class="list-item"><strong>Improvements</strong><div class="small muted">${improvements} created · ${improvementsDone} completed · ${state.weekendTasks.filter(t=>dates.includes(t.originalDate)&&!t.completed).length} outstanding</div></div><div class="list-item"><strong>Session status</strong><div class="small muted">${completed.length} completed · ${missed} missed/skipped · ${rescheduled} rescheduled</div></div></div>
+  <div class="form-grid" style="margin-top:14px"><label class="full">What was your biggest win this week?<textarea id="wrWin">${escapeHtml(existing?.win||"")}</textarea></label><label class="full">What do you want to improve next week?<textarea id="wrImprove">${escapeHtml(existing?.nextImprovement||"")}</textarea></label></div>
+  <div class="modal-actions"><button class="btn primary" id="wrSave">Save weekly review</button></div>`,
+  m=>m.querySelector("#wrSave").onclick=async()=>{const r=existing||{id:uid(),weekStart:dates[0],weekEnd:end,createdAt:new Date().toISOString()};r.win=m.querySelector("#wrWin").value.trim();r.nextImprovement=m.querySelector("#wrImprove").value.trim();r.plannedMinutes=planned;r.completedMinutes=actual;r.completionRate=pct(actual,planned);r.completedSessions=completed.length;r.missedSessions=missed;r.rescheduledSessions=rescheduled;r.strongestSubject=strongest?.name||"";r.improvementsCreated=improvements;r.improvementsCompleted=improvementsDone;await dbPut("weeklyReviews",r);if(!existing)state.weeklyReviews.push(r);else Object.assign(existing,r);closeModal();showToast("Weekly review saved.");renderHome();});
+}
+async function generateWeekendTasks(){
+  const weekday=new Set(["Monday","Tuesday","Wednesday","Thursday","Friday"]);const source=state.sessions.filter(s=>s.status==="completed"&&weekday.has(s.day)&&s.improvement?.trim());
+  for(const s of source){const existing=state.weekendTasks.find(t=>t.sourceSession===s.id&&!t.escalated&&!t.completed);if(existing)continue;const t={id:uid(),task:s.improvement.trim(),subject:s.subject,sourceSession:s.id,originalDate:s.date,originalImprovement:s.improvement.trim(),assignedDay:"Saturday",completed:false,notes:"",deadline:weekDates(s.date).slice(-1)[0],createdAt:new Date().toISOString(),escalated:false};await dbPut("weekendTasks",t);state.weekendTasks.push(t)}
+}
+function editWeekend(id){
+ const t=state.weekendTasks.find(x=>x.id===id);if(!t)return;
+ openModal(`<div class="modal-head"><div><div class="eyebrow">Weekend task</div><h2 id="modalTitle">Edit task</h2></div><button class="btn" data-close>Close</button></div><div class="form-grid"><label class="full">Task<textarea id="ewTask">${escapeHtml(t.task)}</textarea></label><label>Assigned day<select id="ewDay">${["Saturday","Sunday","Both"].map(x=>`<option ${t.assignedDay===x?"selected":""}>${x}</option>`).join("")}</select></label><label>Deadline<input id="ewDeadline" type="date" value="${t.deadline||""}"></label><label class="full">Notes<textarea id="ewNotes">${escapeHtml(t.notes||"")}</textarea></label></div><div class="modal-actions"><button class="btn primary" id="ewSave">Save</button></div>`,m=>m.querySelector("#ewSave").onclick=async()=>{t.task=m.querySelector("#ewTask").value.trim();t.assignedDay=m.querySelector("#ewDay").value;t.deadline=m.querySelector("#ewDeadline").value;t.notes=m.querySelector("#ewNotes").value.trim();await dbPut("weekendTasks",t);closeModal();renderWeekend()});
+}
+async function escalatePressing(){
+  const now=new Date(), day=now.getDay();if(day!==0 && day!==1)return;
+  const incomplete=state.weekendTasks.filter(t=>!t.completed&&!t.escalated&&t.deadline&&new Date(t.deadline+"T23:59:59")<now);
+  for(const t of incomplete){t.escalated=true;await dbPut("weekendTasks",t);const p={id:uid(),task:t.task,subject:t.subject,sourceTask:t.id,originalDate:t.originalDate,daysOutstanding:daysOutstanding(t),priority:"Normal",notes:t.notes||"",completed:false,snoozedUntil:null,createdAt:new Date().toISOString()};await dbPut("pressing",p);state.pressing.push(p)}
+}
+function snoozePressing(id){const t=state.pressing.find(x=>x.id===id);if(!t)return;const d=new Date();d.setDate(d.getDate()+1);t.snoozedUntil=isoDate(d);dbPut("pressing",t);showToast("Snoozed until tomorrow.");renderPressing()}
+async function requestNotifications(){if(!("Notification" in window)){showToast("Browser notifications are not available here.");return}try{const p=await Notification.requestPermission();showToast(`Notification permission: ${p}`);state.settings.notifications=p==="granted";await persistSettings();renderSettings()}catch{showToast("Notification permission could not be requested.")}}
+function exportData(){
+ const payload={schemaVersion:1,exportedAt:new Date().toISOString(),settings:state.settings,timetable:state.timetable,topics:state.topics,sessions:state.sessions,weekendTasks:state.weekendTasks,pressing:state.pressing,weeklyReviews:state.weeklyReviews};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`academic-ledger-backup-${isoDate(new Date())}.json`;a.click();URL.revokeObjectURL(url);showToast("Backup exported.");
+}
+function validImport(x){return x&&x.schemaVersion===1&&x.settings&&x.timetable&&x.topics&&x.sessions&&x.weekendTasks&&x.pressing&&x.weeklyReviews&&["A","B"].every(w=>x.timetable[w]&&DAYS.every(d=>Array.isArray(x.timetable[w][d])))}
+document.getElementById("importInput").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const x=JSON.parse(await file.text());if(!validImport(x))throw new Error("Invalid schema");if(!confirm("Importing will replace your current application data. Continue?"))return;await dbClear();state.settings={...state.settings,...x.settings};state.timetable=x.timetable;state.topics=x.topics;state.sessions=x.sessions;state.weekendTasks=x.weekendTasks;state.pressing=x.pressing;state.weeklyReviews=x.weeklyReviews;await persistSettings();await dbPut("timetable",{id:"main",data:state.timetable});for(const k of ["topics","sessions","weekendTasks","pressing","weeklyReviews"])for(const v of state[k])await dbPut(k,v);applyTheme();showToast("Backup imported.");renderPage()}catch(err){console.error(err);showToast("That backup could not be imported. Your existing data was kept.")}e.target.value=""};
+async function clearData(){if(!confirm("Clear all study data, topics, timetable edits and settings? This cannot be undone unless you have an export backup."))return;await dbClear();state={settings:{week:"A",theme:"autumn",onboarded:true,notifications:false,reminder:"daily",clock24:true,firstDay:1,defaultSession:"prepare"},timetable:clone(DEFAULT_TIMETABLE),topics:[],sessions:[],weekendTasks:[],pressing:[],weeklyReviews:[],activeTimer:null};await persistSettings();await dbPut("timetable",{id:"main",data:state.timetable});applyTheme();showToast("All local data cleared.");renderPage()}
+function onboarding(){
+ openModal(`<div class="modal-head"><div><div class="eyebrow">First use</div><h2 id="modalTitle">Set up your academic ledger</h2></div></div><div class="grid"><label>1. Which week are you starting with?<div class="choice-row" id="obWeek"><button class="choice selected" data-v="A">Week A</button><button class="choice" data-v="B">Week B</button></div></label><label>2. Notifications?<select id="obNotify"><option value="false">No</option><option value="true">Yes</option></select></label><label>3. Theme?<select id="obTheme">${Object.entries(THEMES).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></label><label>4. Review/edit timetable?<select id="obEdit"><option value="false">Go directly to Home</option><option value="true">Open timetable editor after setup</option></select></label></div><div class="modal-actions"><button class="btn primary" id="obSave">Enter Home</button></div>`,m=>{let w="A";m.querySelectorAll("#obWeek .choice").forEach(b=>b.onclick=()=>{w=b.dataset.v;m.querySelectorAll("#obWeek .choice").forEach(x=>x.classList.toggle("selected",x===b))});m.querySelector("#obSave").onclick=async()=>{state.settings.week=w;state.settings.theme=m.querySelector("#obTheme").value;state.settings.onboarded=true;state.settings.notifications=m.querySelector("#obNotify").value==="true";await persistSettings();safeLSSet("ledger-onboarded","1");applyTheme();const edit=m.querySelector("#obEdit").value==="true";closeModal();navigate(edit?"timetable":"home");}});
+}
+async function recoverTimer(){
+ if(state.activeTimer?.status==="awaiting-reflection"){openReflection(state.activeTimer,false);return}
+ if(state.activeTimer?.status==="running"||state.activeTimer?.status==="paused")showToast("An active session was recovered."); 
+}
+function registerSW(){if("serviceWorker" in navigator && location.protocol!=="file:"){navigator.serviceWorker.register("sw.js").catch(e=>console.warn("SW registration failed",e));}}
+function boot(){
+  // Progressive initialisation: visible shell -> data -> theme -> timetable -> interactions -> SW.
+  renderNav();renderHome();
+  initDB().then(async()=>{try{await seedTimetable();await loadState();document.getElementById("storageStatus").textContent=`Storage: ${storageMode}`;renderNav();renderPage();await recoverTimer();if(!state.settings.onboarded)onboarding();}catch(e){console.error(e);showToast("Saved data could not be loaded; the app is using safe defaults.")}finally{registerSW()}}).catch(e=>{console.error(e);showToast("Storage initialisation failed; local fallback is active.");registerSW()});
+}
+window.addEventListener("beforeunload",()=>{if(state.activeTimer)dbPut("activeTimer",state.activeTimer).catch(()=>{})});
+boot();
+</script>
+</body>
+</html>
